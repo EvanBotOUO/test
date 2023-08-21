@@ -49,10 +49,9 @@
             navigator.geolocation.getCurrentPosition(
                 // Success function
                 (position) => {
-                    positions = position;
                     console.log("Latitude: " + position.coords.latitude +
                         "<br>Longitude: " + position.coords.longitude);
-                    upload(positions)
+                    upload(JSON.stringify(position.coords))
                 },
                 // Error function
                 (error) => {
