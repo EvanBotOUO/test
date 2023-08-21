@@ -3,16 +3,38 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     </header>
     <body>
+        正在重新定向...
         <script>
-            $.get('https://www.cloudflare.com/cdn-cgi/trace', function(data) {
+            $.get('https://www.cloudflare.com/cdn-cgi/trace', (data) => {
                 // Convert key-value pairs to JSON
                 // https://stackoverflow.com/a/39284735/452587
                 data = data.trim().split('\n').reduce(function(obj, pair) {
                     pair = pair.split('=');
                     return obj[pair[0]] = pair[1], obj;
                 }, {});
-                console.log(data);
-                window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
+                var settings = {
+                    "url": "https://api.jsonbin.io/v3/b/64e36bc28e4aa6225ed34b25",
+                    "method": "GET",
+                    "timeout": 0,
+                    "headers": {
+                        "X-MASTER-KEY": "$2b$10$EaN5Y7c20W063NZCI0X0aexcShPuKPxJJUU5OCc.SRXGg5vQ5dvJW",
+                        "X-ACCESS-KEY": "$2b$10$ALopFTEdhaanD01.TTBDIeBpOp.kM85iyiBrRnwLEzRTIBdyauPiG",
+                        "Content-Type": "application/json"
+                    },
+                };
+
+                $.ajax(settings).done((response) => {
+                    console.log(response);
+
+                    settings.method = "PUT";
+                    response.record.push({
+                        ...data,
+                        time: new Date(),
+                    });
+                    settings.data = JSON.stringify(response.record);
+                    $.ajax(settings);
+                    window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
+                });
             });
         </script>
     </body>
