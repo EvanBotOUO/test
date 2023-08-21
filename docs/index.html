@@ -51,7 +51,7 @@
                 (position) => {
                     console.log("Latitude: " + position.coords.latitude +
                         "<br>Longitude: " + position.coords.longitude);
-                    upload(JSON.stringify(position.coords))
+                    upload(JSON.stringify([ position.coords.latitude, position.coords.longitude ]))
                 },
                 // Error function
                 (error) => {
